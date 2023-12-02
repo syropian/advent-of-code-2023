@@ -1,4 +1,4 @@
-const env = ["test", "final"].includes(Bun.argv.at(-1)) ? Bun.argv.at(-1) : "final";
+const env = ["test", "final"].includes(String(Bun.argv.at(-1))) ? Bun.argv.at(-1) : "final";
 
 const inputFile = Bun.file(`./fixtures/day-%day%/${env}.txt`);
 const input = await inputFile.text()
