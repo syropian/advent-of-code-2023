@@ -42,10 +42,8 @@ function partOne() {
 }
 
 function partTwo() {
-  const allGames = input.split('\n').map((game) => {
-    const gameId = game.split(/Game (\d+)/)[1]
-
-    const sets = game
+  const allGames = input.split('\n').map((gameLine) => {
+    const sets = gameLine
       .split(': ')[1]
       .split(';')
       .map((set) =>
@@ -64,8 +62,20 @@ function partTwo() {
     return sets
   }, {} as Record<string, Record<string, number>[]>)
 
-  // return allGames
-  return JSON.stringify(allGames)
+  return allGames
+    .map((game) => {
+      return game.reduce((acc, curr) => {
+        Object.entries(curr).forEach(([color, count]) => {
+          acc[color] = Math.max(acc[color] || 0, count)
+        })
+
+        return acc
+      }, {})
+    })
+    .reduce((acc, curr) => {
+      acc += Object.values(curr).reduce((acc, curr) => acc * curr, 1)
+      return acc
+    }, 0)
 }
 
 console.log({
