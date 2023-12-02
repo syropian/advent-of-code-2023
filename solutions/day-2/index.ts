@@ -74,6 +74,7 @@ function partTwo() {
     })
     .reduce((acc, curr) => {
       acc += Object.values(curr).reduce((acc, curr) => acc * curr, 1)
+
       return acc
     }, 0)
 }
