@@ -7,7 +7,7 @@ const cards = input.split('\n')
 const intersection = (a: number[], b: number[]) => a.filter((value) => b.includes(value))
 
 function partOne() {
-  const score = cards.reduce((total, card, i) => {
+  const score = cards.reduce((total, card) => {
     const [winningNumbers, playerNumbers] = card
       .replace(/Card (\d+): /, '')
       .split('|')
@@ -30,7 +30,33 @@ function partOne() {
 }
 
 function partTwo() {
-  return 0
+  let copies = Array.from({ length: cards.length }).fill(0) as Array<number>
+
+  const score = cards.reduce((total, card) => {
+    const [_, winningChars, playerChars] = card.split(/\||Card *(\d+): /).filter(Boolean)
+
+    const winningNumbers = winningChars.split(' ').filter(Boolean).map(Number)
+    const playerNumbers = playerChars.split(' ').filter(Boolean).map(Number)
+
+    const matches = intersection(winningNumbers, playerNumbers)
+    const cardCount = (copies?.shift() ?? 0) + 1
+
+    total += cardCount
+
+    if (matches.length) {
+      copies = copies.map((copy, i) => {
+        if (i > matches.length - 1) {
+          return copy
+        }
+
+        return copy + cardCount
+      })
+    }
+
+    return total
+  }, 0)
+
+  return score
 }
 
 console.log({
