@@ -57,8 +57,7 @@ function partTwo() {
           Array.from([adjacentAbove, adjacentBelow, toLeft, toRight]).forEach((adjacent, i) => {
             if (adjacent.includes('*')) {
               const index = adjacent.indexOf('*')
-              const verticalX = Math.max(0, rangeStart - 1) + index
-              const gearX = i < 2 ? verticalX : i === 2 ? rangeStart - 1 : rangeEnd
+              const gearX = i < 2 ? Math.max(0, rangeStart - 1) + index : i === 2 ? rangeStart - 1 : rangeEnd
               const gearY = i === 0 ? lineIndex - 1 : i === 1 ? lineIndex + 1 : lineIndex
 
               gearMap[`${gearX},${gearY}`] = [...(gearMap[`${gearX},${gearY}`] ?? []), Number(chunk)]
