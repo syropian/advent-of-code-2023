@@ -1,18 +1,19 @@
-const env = ["test", "final"].includes(String(Bun.argv.at(-1))) ? Bun.argv.at(-1) : "final";
+const env = ['test', 'final'].includes(String(Bun.argv.at(-1))) ? Bun.argv.at(-1) : 'final'
 
-const inputFile = Bun.file(`./fixtures/day-%day%/${env}.txt`);
+const inputFile = Bun.file(`./fixtures/day-%day%/${env}.txt`)
 const input = await inputFile.text()
+const lines = input.split('\n')
 
 function partOne() {
-  return 0;
+  return 0
 }
 
 function partTwo() {
-  return 0;
+  return 0
 }
 
 console.log({
   Env: env,
-  "Part One": partOne(),
-  "Part Two": partTwo(),
-});
+  'Part One': partOne(),
+  'Part Two': partTwo(),
+})
