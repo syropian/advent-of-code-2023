@@ -55,6 +55,7 @@ function partTwo() {
       return rangeMap.map((map) => {
         return rangeMapsList.slice(0, i + 1).reduceRight((acc, mappingRange) => {
           const targetMappingRange = mappingRange.find(({ destStart, destEnd }) => acc >= destStart && acc <= destEnd)
+
           return targetMappingRange ? targetMappingRange.sourceStart + (acc - targetMappingRange.destStart) : acc
         }, map.destStart)
       })
