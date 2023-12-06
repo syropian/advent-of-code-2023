@@ -80,4 +80,4 @@ console.log({
   'Part Two': partTwo(),
 })
 const timeEnd = performance.now()
-console.log(`Time ${(timeEnd - time).toFixed(4)}ms`)
+console.log(`Time: ${(timeEnd - time).toFixed(4)}ms`)
