@@ -12,9 +12,25 @@ function partOne() {
     return acc
   }, {} as Record<string, [string, string]>)
 
-  let curr = Object.keys(nodes)[0]
+  let curr = 'AAA'
   let i = 0
-  while (curr !== 'ZZZ') return nodes
+
+  while (curr !== 'ZZZ') {
+    for (let j = 0; j < instructions.length; j++) {
+      const index = instructions.charAt(j) === 'L' ? 0 : 1
+      const key = Object.keys(nodes).find((node) => node === curr)
+
+      if (key) {
+        curr = nodes[key][index]
+      } else {
+        console.log('oh no...')
+      }
+
+      i++
+    }
+  }
+
+  return i
 }
 
 function partTwo() {
