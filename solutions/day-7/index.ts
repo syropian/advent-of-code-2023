@@ -70,10 +70,7 @@ function partOne() {
     })
     .toSorted(rankSort)
 
-  return handsWithMatches.reduce((acc, curr, i) => {
-    acc += curr.bid * (handsWithMatches.length - i)
-    return acc
-  }, 0)
+  return handsWithMatches.reduce((acc, curr, i) => acc + curr.bid * (handsWithMatches.length - i), 0)
 }
 
 function partTwo() {
@@ -131,10 +128,7 @@ function partTwo() {
     })
     .toSorted(rankSort)
 
-  return handsWithMatches.reduce((acc, curr, i) => {
-    acc += curr.bid * (handsWithMatches.length - i)
-    return acc
-  }, 0)
+  return handsWithMatches.reduce((acc, curr, i) => acc + curr.bid * (handsWithMatches.length - i), 0)
 }
 
 console.log(
