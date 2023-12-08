@@ -28,11 +28,7 @@ function partOne() {
   const handsWithMatches = hands
     .map((hand, i) => {
       const matches = hand.reduce((acc, card) => {
-        if (!acc[`${card}`]) {
-          acc[`${card}`] = 1
-        } else {
-          acc[`${card}`] += 1
-        }
+        acc[`${card}`] = (acc[`${card}`] ?? 0) + 1
 
         return acc
       }, {} as Record<string, number>)
@@ -49,27 +45,21 @@ function partOne() {
       const aMaxMatch = Math.max(...aMatches)
       const bMaxMatch = Math.max(...bMatches)
 
-      if (aMatches.length > bMatches.length) {
-        return 1
-      } else if (aMatches.length < bMatches.length) {
-        return -1
-      } else {
-        if (aMaxMatch > bMaxMatch) {
-          return -1
-        } else if (aMaxMatch < bMaxMatch) {
-          return 1
-        } else {
-          for (let j = 0; j < a.hand.length; j++) {
-            if (a.hand[j] > b.hand[j]) {
-              return -1
-            } else if (a.hand[j] < b.hand[j]) {
-              return 1
-            }
-          }
+      if (aMatches.length !== bMatches.length) {
+        return aMatches.length - bMatches.length
+      }
 
-          return 0
+      if (aMaxMatch !== bMaxMatch) {
+        return bMaxMatch - aMaxMatch
+      }
+
+      for (let j = 0; j < a.hand.length; j++) {
+        if (a.hand[j] !== b.hand[j]) {
+          return b.hand[j] - a.hand[j]
         }
       }
+
+      return 0
     })
 
   return handsWithMatches.reduce((acc, curr, i) => {
@@ -104,12 +94,7 @@ function partTwo() {
       const matches = hand
         .filter((card) => card !== 1)
         .reduce((acc, card) => {
-          if (!acc[`${card}`]) {
-            acc[`${card}`] = 1
-          } else {
-            acc[`${card}`] += 1
-          }
-
+          acc[`${card}`] = (acc[`${card}`] ?? 0) + 1
           return acc
         }, {} as Record<string, number>)
 
