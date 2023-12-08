@@ -4,6 +4,35 @@ const inputFile = Bun.file(`./fixtures/day-7/${env}.txt`)
 const input = await inputFile.text()
 const lines = input.split('\n')
 
+type Hand = {
+  hand: number[]
+  matches: Record<string, number>
+  bid: number
+}
+
+const rankSort = (a: Hand, b: Hand) => {
+  const aMatches = Object.values(a.matches)
+  const bMatches = Object.values(b.matches)
+  const aMaxMatch = Math.max(...aMatches)
+  const bMaxMatch = Math.max(...bMatches)
+
+  if (aMatches.length !== bMatches.length) {
+    return aMatches.length - bMatches.length
+  }
+
+  if (aMaxMatch !== bMaxMatch) {
+    return bMaxMatch - aMaxMatch
+  }
+
+  for (let j = 0; j < a.hand.length; j++) {
+    if (a.hand[j] !== b.hand[j]) {
+      return b.hand[j] - a.hand[j]
+    }
+  }
+
+  return 0
+}
+
 function partOne() {
   const hands = lines.map((line) =>
     line
@@ -28,11 +57,7 @@ function partOne() {
   const handsWithMatches = hands
     .map((hand, i) => {
       const matches = hand.reduce((acc, card) => {
-        if (!acc[`${card}`]) {
-          acc[`${card}`] = 1
-        } else {
-          acc[`${card}`] += 1
-        }
+        acc[`${card}`] = (acc[`${card}`] ?? 0) + 1
 
         return acc
       }, {} as Record<string, number>)
@@ -41,41 +66,11 @@ function partOne() {
         hand,
         matches,
         bid: bids[i],
-      }
+      } as Hand
     })
-    .toSorted((a, b) => {
-      const aMatches = Object.values(a.matches)
-      const bMatches = Object.values(b.matches)
-      const aMaxMatch = Math.max(...aMatches)
-      const bMaxMatch = Math.max(...bMatches)
+    .toSorted(rankSort)
 
-      if (aMatches.length > bMatches.length) {
-        return 1
-      } else if (aMatches.length < bMatches.length) {
-        return -1
-      } else {
-        if (aMaxMatch > bMaxMatch) {
-          return -1
-        } else if (aMaxMatch < bMaxMatch) {
-          return 1
-        } else {
-          for (let j = 0; j < a.hand.length; j++) {
-            if (a.hand[j] > b.hand[j]) {
-              return -1
-            } else if (a.hand[j] < b.hand[j]) {
-              return 1
-            }
-          }
-
-          return 0
-        }
-      }
-    })
-
-  return handsWithMatches.reduce((acc, curr, i) => {
-    acc += curr.bid * (handsWithMatches.length - i)
-    return acc
-  }, 0)
+  return handsWithMatches.reduce((acc, curr, i) => acc + curr.bid * (handsWithMatches.length - i), 0)
 }
 
 function partTwo() {
@@ -104,94 +99,42 @@ function partTwo() {
       const matches = hand
         .filter((card) => card !== 1)
         .reduce((acc, card) => {
-          // if (card === 1) {
-          //   if (i === 10) {
-          //     console.log('Largest key', acc)
-          //   }
-          //   if (!Object.keys(acc).length) {
-          //     acc['14'] = 1
-          //   } else {
-          //     const jokerCount = hand.filter((card) => card === 1).length
-          //     if (jokerCount === 4) {
-          //       acc['14'] = (acc['14'] ?? 0) + 1
-          //     } else {
-          //       const largestMap = Math.max(...Object.values(acc))
-          //       const largestMatchKey = Object.keys(acc)
-          //         .sort((a, b) => Number(b) - Number(a))
-          //         .find((key) => acc[key] === largestMap) as string
-
-          //       acc[largestMatchKey] = (acc[largestMatchKey] ?? 0) + 1
-          //     }
-          //   }
-          // }
-
-          if (!acc[`${card}`]) {
-            acc[`${card}`] = 1
-          } else {
-            acc[`${card}`] += 1
-          }
-
-          const jokerCount = hand.filter((card) => card === 1).length
-
-          if (jokerCount === 4) {
-            acc['14'] = (acc['14'] ?? 0) + 1
-          } else {
-            const largestMap = Math.max(...Object.values(acc))
-            const largestMatchKey = Object.keys(acc)
-              .sort((a, b) => Number(b) - Number(a))
-              .find((key) => acc[key] === largestMap) as string
-
-            acc[largestMatchKey] = (acc[largestMatchKey] ?? 0) + 1
-          }
-
+          acc[`${card}`] = (acc[`${card}`] ?? 0) + 1
           return acc
         }, {} as Record<string, number>)
+
+      const jokerCount = hand.filter((card) => card === 1).length
+
+      if (jokerCount >= 3) {
+        if (Object.keys(matches).length) {
+          const highestValue = Math.max(...Object.keys(matches).map(Number))
+          matches[highestValue] = (matches[highestValue] ?? 0) + jokerCount
+        } else {
+          matches['14'] = (matches['14'] ?? 0) + jokerCount
+        }
+      } else if (jokerCount < 3 && jokerCount > 0) {
+        const largestMap = Math.max(...Object.values(matches))
+        const largestMatchKey = Object.keys(matches)
+          .sort((a, b) => Number(b) - Number(a))
+          .find((key) => matches[key] === largestMap) as string
+        matches[largestMatchKey] = (matches[largestMatchKey] ?? 0) + jokerCount
+      }
 
       return {
         hand,
         matches,
         bid: bids[i],
-      }
+      } as Hand
     })
-    .toSorted((a, b) => {
-      const aMatches = Object.values(a.matches)
-      const bMatches = Object.values(b.matches)
-      const aMaxMatch = Math.max(...aMatches)
-      const bMaxMatch = Math.max(...bMatches)
+    .toSorted(rankSort)
 
-      if (aMatches.length > bMatches.length) {
-        return 1
-      } else if (aMatches.length < bMatches.length) {
-        return -1
-      } else {
-        if (aMaxMatch > bMaxMatch) {
-          return -1
-        } else if (aMaxMatch < bMaxMatch) {
-          return 1
-        } else {
-          for (let j = 0; j < a.hand.length; j++) {
-            if (a.hand[j] > b.hand[j]) {
-              return -1
-            } else if (a.hand[j] < b.hand[j]) {
-              return 1
-            }
-          }
-
-          return 0
-        }
-      }
-    })
-  return handsWithMatches
-  return handsWithMatches.reduce((acc, curr, i) => {
-    acc += curr.bid * (handsWithMatches.length - i)
-    return acc
-  }, 0)
+  return handsWithMatches.reduce((acc, curr, i) => acc + curr.bid * (handsWithMatches.length - i), 0)
 }
 
 console.log(
   Bun.inspect({
     Env: env,
     'Part One': partOne(),
-    'Part Two': partTwo(), // looking for 6839
+    'Part Two': partTwo(),
   })
 )
