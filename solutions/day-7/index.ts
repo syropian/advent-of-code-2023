@@ -4,6 +4,35 @@ const inputFile = Bun.file(`./fixtures/day-7/${env}.txt`)
 const input = await inputFile.text()
 const lines = input.split('\n')
 
+type Hand = {
+  hand: number[]
+  matches: Record<string, number>
+  bid: number
+}
+
+const rankSort = (a: Hand, b: Hand) => {
+  const aMatches = Object.values(a.matches)
+  const bMatches = Object.values(b.matches)
+  const aMaxMatch = Math.max(...aMatches)
+  const bMaxMatch = Math.max(...bMatches)
+
+  if (aMatches.length !== bMatches.length) {
+    return aMatches.length - bMatches.length
+  }
+
+  if (aMaxMatch !== bMaxMatch) {
+    return bMaxMatch - aMaxMatch
+  }
+
+  for (let j = 0; j < a.hand.length; j++) {
+    if (a.hand[j] !== b.hand[j]) {
+      return b.hand[j] - a.hand[j]
+    }
+  }
+
+  return 0
+}
+
 function partOne() {
   const hands = lines.map((line) =>
     line
@@ -37,30 +66,9 @@ function partOne() {
         hand,
         matches,
         bid: bids[i],
-      }
+      } as Hand
     })
-    .toSorted((a, b) => {
-      const aMatches = Object.values(a.matches)
-      const bMatches = Object.values(b.matches)
-      const aMaxMatch = Math.max(...aMatches)
-      const bMaxMatch = Math.max(...bMatches)
-
-      if (aMatches.length !== bMatches.length) {
-        return aMatches.length - bMatches.length
-      }
-
-      if (aMaxMatch !== bMaxMatch) {
-        return bMaxMatch - aMaxMatch
-      }
-
-      for (let j = 0; j < a.hand.length; j++) {
-        if (a.hand[j] !== b.hand[j]) {
-          return b.hand[j] - a.hand[j]
-        }
-      }
-
-      return 0
-    })
+    .toSorted(rankSort)
 
   return handsWithMatches.reduce((acc, curr, i) => {
     acc += curr.bid * (handsWithMatches.length - i)
@@ -119,30 +127,9 @@ function partTwo() {
         hand,
         matches,
         bid: bids[i],
-      }
+      } as Hand
     })
-    .toSorted((a, b) => {
-      const aMatches = Object.values(a.matches)
-      const bMatches = Object.values(b.matches)
-      const aMaxMatch = Math.max(...aMatches)
-      const bMaxMatch = Math.max(...bMatches)
-
-      if (aMatches.length !== bMatches.length) {
-        return aMatches.length - bMatches.length
-      }
-
-      if (aMaxMatch !== bMaxMatch) {
-        return bMaxMatch - aMaxMatch
-      }
-
-      for (let j = 0; j < a.hand.length; j++) {
-        if (a.hand[j] !== b.hand[j]) {
-          return b.hand[j] - a.hand[j]
-        }
-      }
-
-      return 0
-    })
+    .toSorted(rankSort)
 
   return handsWithMatches.reduce((acc, curr, i) => {
     acc += curr.bid * (handsWithMatches.length - i)
