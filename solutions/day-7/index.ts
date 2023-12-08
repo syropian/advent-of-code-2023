@@ -104,48 +104,31 @@ function partTwo() {
       const matches = hand
         .filter((card) => card !== 1)
         .reduce((acc, card) => {
-          // if (card === 1) {
-          //   if (i === 10) {
-          //     console.log('Largest key', acc)
-          //   }
-          //   if (!Object.keys(acc).length) {
-          //     acc['14'] = 1
-          //   } else {
-          //     const jokerCount = hand.filter((card) => card === 1).length
-          //     if (jokerCount === 4) {
-          //       acc['14'] = (acc['14'] ?? 0) + 1
-          //     } else {
-          //       const largestMap = Math.max(...Object.values(acc))
-          //       const largestMatchKey = Object.keys(acc)
-          //         .sort((a, b) => Number(b) - Number(a))
-          //         .find((key) => acc[key] === largestMap) as string
-
-          //       acc[largestMatchKey] = (acc[largestMatchKey] ?? 0) + 1
-          //     }
-          //   }
-          // }
-
           if (!acc[`${card}`]) {
             acc[`${card}`] = 1
           } else {
             acc[`${card}`] += 1
           }
 
-          const jokerCount = hand.filter((card) => card === 1).length
-
-          if (jokerCount === 4) {
-            acc['14'] = (acc['14'] ?? 0) + 1
-          } else {
-            const largestMap = Math.max(...Object.values(acc))
-            const largestMatchKey = Object.keys(acc)
-              .sort((a, b) => Number(b) - Number(a))
-              .find((key) => acc[key] === largestMap) as string
-
-            acc[largestMatchKey] = (acc[largestMatchKey] ?? 0) + 1
-          }
-
           return acc
         }, {} as Record<string, number>)
+
+      const jokerCount = hand.filter((card) => card === 1).length
+
+      if (jokerCount >= 3) {
+        if (Object.keys(matches).length) {
+          const h = Math.max(...Object.keys(matches).map(Number))
+          matches[h] = (matches[h] ?? 0) + jokerCount
+        } else {
+          matches['14'] = (matches['14'] ?? 0) + jokerCount
+        }
+      } else if (jokerCount < 3 && jokerCount > 0) {
+        const largestMap = Math.max(...Object.values(matches))
+        const largestMatchKey = Object.keys(matches)
+          .sort((a, b) => Number(b) - Number(a))
+          .find((key) => matches[key] === largestMap) as string
+        matches[largestMatchKey] = (matches[largestMatchKey] ?? 0) + jokerCount
+      }
 
       return {
         hand,
@@ -181,7 +164,7 @@ function partTwo() {
         }
       }
     })
-  return handsWithMatches
+
   return handsWithMatches.reduce((acc, curr, i) => {
     acc += curr.bid * (handsWithMatches.length - i)
     return acc
@@ -192,6 +175,6 @@ console.log(
   Bun.inspect({
     Env: env,
     'Part One': partOne(),
-    'Part Two': partTwo(), // looking for 6839
+    'Part Two': partTwo(),
   })
 )
