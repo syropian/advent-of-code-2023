@@ -107,8 +107,8 @@ function partTwo() {
 
       if (jokerCount >= 3) {
         if (Object.keys(matches).length) {
-          const h = Math.max(...Object.keys(matches).map(Number))
-          matches[h] = (matches[h] ?? 0) + jokerCount
+          const highestValue = Math.max(...Object.keys(matches).map(Number))
+          matches[highestValue] = (matches[highestValue] ?? 0) + jokerCount
         } else {
           matches['14'] = (matches['14'] ?? 0) + jokerCount
         }
